@@ -56,7 +56,7 @@ public:
     void on_accept(beast::error_code ec) {
         if(ec) {
             // 握手错误时输出并返回
-            std::cerr << "Accept error: " << ec.message() << std::endl;
+            std::cerr << "握手失败，错误信息: " << ec.message() << std::endl;
             return;
         }
         
@@ -64,7 +64,7 @@ public:
         {
             std::lock_guard<std::mutex> lock(sessions_mutex_);
             sessions_.insert(shared_from_this());
-            std::cout << "New client connected. Total clients: " << sessions_.size() << std::endl;
+            std::cout << "新客户端连接，总客户端数: " << sessions_.size() << std::endl;
         }
         
         // 开始读取消息
@@ -87,21 +87,21 @@ public:
             {
                 std::lock_guard<std::mutex> lock(sessions_mutex_);
                 sessions_.erase(shared_from_this());
-                std::cout << "Client disconnected. Total clients: " << sessions_.size() << std::endl;
+                std::cout << "客户端断开连接，总客户端数: " << sessions_.size() << std::endl;
             }
             return;
         }
         
         if(ec) {
             // 其他读取错误时输出并返回
-            std::cerr << "Read error: " << ec.message() << std::endl;
+            std::cerr << "读取错误: " << ec.message() << std::endl;
             return;
         }
         
         // 将缓冲区中的数据转换为字符串
         auto out = beast::buffers_to_string(buffer_.data());
-        std::cout << "Received message: " << out << std::endl;
-        
+        std::cout << "收到消息: " << out << std::endl;
+
         // 广播消息给所有其他客户端
         {
             std::lock_guard<std::mutex> lock(sessions_mutex_);
@@ -111,7 +111,7 @@ public:
                         net::buffer(out),
                         [](beast::error_code ec, std::size_t bytes_transferred) {
                             if(ec) {
-                                std::cerr << "Write error: " << ec.message() << std::endl;
+                                std::cerr << "写入错误: " << ec.message() << std::endl;
                             }
                         });
                 }
@@ -152,7 +152,7 @@ private:
                 if(!ec) {
                     std::make_shared<Session>(std::move(socket), sessions_, sessions_mutex_)->run();
                 } else {
-                    std::cerr << "Accept error: " << ec.message() << std::endl;
+                    std::cerr << "握手失败，错误信息: " << ec.message() << std::endl;
                 }
                 // 继续接受下一次连接
                 accept_connection();

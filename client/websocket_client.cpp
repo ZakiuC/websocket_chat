@@ -52,7 +52,7 @@ public:
         // 输出连接成功信息（加锁以避免并发输出混乱）
         {
             std::lock_guard<std::mutex> lock(cout_mutex_);
-            std::cout << "Connected to server at " << host_ << ":" << port_ << std::endl;
+            std::cout << "已连接服务器 " << host_ << ":" << port_ << std::endl;
         }
     }
     
@@ -68,7 +68,7 @@ public:
             // 如果关闭过程中有错误，输出提示
             if (ec) {
                 std::lock_guard<std::mutex> lock(cout_mutex_);
-                std::cerr << "Close error: " << ec.message() << std::endl;
+                std::cerr << "关闭错误: " << ec.message() << std::endl;
             }
             
             // 等待接收线程结束
@@ -94,14 +94,14 @@ public:
             if (ec == websocket::error::closed) {
                 if (running_) {
                     std::lock_guard<std::mutex> lock(cout_mutex_);
-                    std::cout << "\nConnection closed by server" << std::endl;
+                    std::cout << "\n连接已关闭，来自服务器" << std::endl;
                 }
                 break;
             } else if (ec) {
                 // 其他读取错误
                 if (running_) {
                     std::lock_guard<std::mutex> lock(cout_mutex_);
-                    std::cerr << "\nRead error: " << ec.message() << std::endl;
+                    std::cerr << "\n读取错误: " << ec.message() << std::endl;
                 }
                 break;
             }
@@ -110,8 +110,8 @@ public:
             auto msg = beast::buffers_to_string(buffer.data());
             {
                 std::lock_guard<std::mutex> lock(cout_mutex_);
-                std::cout << "\nReceived: " << msg << std::endl;
-                std::cout << "Enter message: " << std::flush;
+                std::cout << "\n收到消息: " << msg << std::endl;
+                std::cout << "请输入消息: " << std::flush;
             }
             buffer.consume(buffer.size());  // 清空缓冲区
         }
@@ -127,7 +127,7 @@ public:
             // 提示输入
             {
                 std::lock_guard<std::mutex> lock(cout_mutex_);
-                std::cout << "Enter message: ";
+                std::cout << "请输入消息: ";
             }
             
             // 读取用户输入
@@ -153,8 +153,8 @@ public:
 // 程序入口：接收命令行参数并启动客户端
 int main(int argc, char** argv) {
     if(argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <host> <port>\n";
-        std::cerr << "Example: " << argv[0] << " 127.0.0.1 8080\n";
+        std::cerr << "用法: " << argv[0] << " <host> <port>\n";
+        std::cerr << "示例: " << argv[0] << " 127.0.0.1 8080\n";
         return EXIT_FAILURE;
     }
     
@@ -164,7 +164,7 @@ int main(int argc, char** argv) {
         client.run();                              // 运行发送/接收循环
     } catch (const std::exception& e) {
         // 捕获并输出异常
-        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "错误: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
