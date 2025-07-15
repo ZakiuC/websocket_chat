@@ -15,20 +15,26 @@ sudo apt install libboost-dev libboost-system-dev   # 没装完整可以手动�
 
 #### 结构
 
-websocket_chat/
-├── server/
-│   ├── CMakeLists.txt
-│   └── websocket_server.cpp
-├── client/
-│   ├── CMakeLists.txt
-│   └── websocket_client.cpp
-└── build/
-    ├── server
-    └── client
+websocket_chat/  
+├── server/  
+│   ├── CMakeLists.txt  
+│   └── websocket_server.cpp  
+├── client/  
+│   ├── CMakeLists.txt  
+│   └── websocket_client.cpp  
+└── build/  
+    ├── server  
+    └── client  
 
 #### 使用
 
 ##### 编译
+
+###### 创建build目录
+
+```bash
+mkdir -p build/{server,client}
+```
 
 ###### 服务端
 
