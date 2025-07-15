@@ -21,13 +21,13 @@ include_directories(${BOOST_INCLUDEDIR})
 
 # -------------------------------------------------------------------
 # 添加可执行文件，指定源文件
-add_executable(websocket_client websocket_client.cpp)
+add_executable(websocket_server websocket_server.cpp)
 
 # -------------------------------------------------------------------
 # 链接所需的系统库
 #  - boost_system: Boost.Asio 和 Boost.Beast 需要它来处理底层系统调用
 #  - pthread: POSIX 线程库（只有在 Linux/macOS 上需要）
-target_link_libraries(websocket_client PRIVATE 
+target_link_libraries(websocket_server PRIVATE 
     boost_system
     pthread
 )
